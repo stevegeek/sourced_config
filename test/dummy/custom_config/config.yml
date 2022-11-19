@@ -1,0 +1,5 @@
+locales:
+  load_from_type: "local-directory"
+  load_from_source: "custom_config/"
+app_name: "My Client Whitelabel Name"
+footer_color: "black"
