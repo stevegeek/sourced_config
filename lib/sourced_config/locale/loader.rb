@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "./g_sheets_loader"
-require_relative "./s3_config_loader"
+require_relative "./g_sheets_client"
+require_relative "./s3_config_client"
 
 module SourcedConfig
   module Locale
@@ -11,70 +11,43 @@ module SourcedConfig
       COPY_SOURCE_TYPE_GOOGLE_SHEETS = "google-sheets"
       COPY_SOURCE_TYPE_DEFAULT = "default"
 
-      class << self
-        def call!(locale, type, source)
-          Rails.logger.debug { "[locale - #{locale}] Load copy from #{type} #{source}" }
-          case type
-          when COPY_SOURCE_TYPE_LOCAL_DIRECTORY
-            HashWithIndifferentAccess.new load_from_local_dir(source, locale)
-          when COPY_SOURCE_TYPE_S3_CONFIG
-            HashWithIndifferentAccess.new load_from_config_s3(locale)
-          when COPY_SOURCE_TYPE_GOOGLE_SHEETS
-            locale_hash = {}
-            load_from_google_sheets(locale, source).each do |row|
-              parse_item(row, locale_hash)
-            end
-            HashWithIndifferentAccess.new(locale => HashWithIndifferentAccess.new(locale_hash))
-          when COPY_SOURCE_TYPE_DEFAULT
-            # Use build in copy only
-            Rails.logger.warn "[locale - #{locale}] Using only default app copy"
-            HashWithIndifferentAccess.new(locale => {})
-          else
-            raise StandardError, "When loading the Copy and Content the type was unrecognised! #{type}"
-          end
-        end
+      def initialize(type, source, client: nil)
+        @type = type
+        @source = source
+        @client = client
+      end
 
-        private
+      attr_reader :locale, :type, :source
 
-        def load_from_config_s3(locale)
-          return unless make_http_request?
-          S3ConfigLoader.call(locale)
+      def load(locale)
+        Rails.logger.debug { "[locale - #{locale}] Load copy from #{type} #{source}" }
+        case type
+        when COPY_SOURCE_TYPE_LOCAL_DIRECTORY
+          HashWithIndifferentAccess.new load_from_local_dir(locale)
+        when COPY_SOURCE_TYPE_S3_CONFIG, COPY_SOURCE_TYPE_GOOGLE_SHEETS
+          HashWithIndifferentAccess.new(locale => HashWithIndifferentAccess.new(client.load(locale)))
+        when COPY_SOURCE_TYPE_DEFAULT
+          Rails.logger.warn "[locale - #{locale}] Using only default app copy"
+          HashWithIndifferentAccess.new(locale => {})
+        else
+          raise StandardError, "When loading the Copy and Content the type was unrecognised! #{type}"
         end
+      end
 
-        def load_from_local_dir(source, locale)
-          YAML.unsafe_load_file(Rails.root.join(source, "#{locale}.yml")) || {}
-        end
+      private
 
-        def load_from_google_sheets(locale, source)
-          return unless make_http_request?
-          GSheetsLoader.call(locale, source, tsv_options)
-        rescue => e
-          Rails.logger.error "[locale - en] Could not fetch TSV doc directly from Google Spreadsheets: #{e.message}"
+      def client
+        return @client if @client
+        @client = case type
+        when COPY_SOURCE_TYPE_S3_CONFIG
+          S3ConfigClient.new
+        when COPY_SOURCE_TYPE_GOOGLE_SHEETS
+          GSheetsClient.new(source)
         end
+      end
 
-        def tsv_options
-          {
-            col_sep: "\t",
-            quote_char: "^",
-            skip_lines: /^\s*#.*$/,
-            skip_blanks: true,
-            headers: true
-          }
-        end
-
-        def make_http_request?
-          !Rails.env.test?
-        end
-
-        def parse_item(item, locale_hash)
-          *keys, string = item.to_a.map { |x| x[1] }
-          keys.compact!
-          leaf_item = keys[..-2].reduce(locale_hash) do |h, k|
-            next h unless k.present?
-            h[k] ||= {}
-          end
-          leaf_item[keys.last] = string
-        end
+      def load_from_local_dir(locale)
+        YAML.safe_load_file(Rails.root.join(source, "#{locale}.yml")) || {}
       end
     end
   end
