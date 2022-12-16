@@ -12,6 +12,7 @@ module SourcedConfig
       def copy_tasks
         template "templates/sourced_config.rb", "config/initializers/sourced_config.rb"
         template "templates/config.yml.erb", "config/config.yml.erb"
+        template "templates/app_config_schema.rb", "app/config/app_config_schema.rb"
 
         application do
           <<RUBY

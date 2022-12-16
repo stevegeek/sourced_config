@@ -6,10 +6,10 @@ Rails.application.config.to_prepare do
     # This is the class that will be used to validate the configuration. The default is the minimum configuration
     # required, `SourcedConfig::ConfigContract` but you should create your own class that inherits from it and define
     # your own configuration schema as needed.
-    # config.config_schema_klass = AppConfig
+    config.config_schema_klass = AppConfigSchema
 
     # The base configuration file path. This is always required and loaded first. It can be an ERB file.
-    # config.base_configuration_file_path = Rails.root.join("config/config.yml.erb")
+    config.base_configuration_file_path = Rails.root.join("config/config.yml.erb")
 
     # The type of configuration source to use. If not specified the configuration is loaded only from the default source
     # in `base_configuration_file_path`. Can be one of:

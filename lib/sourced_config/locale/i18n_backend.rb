@@ -7,7 +7,7 @@ module SourcedConfig
   module Locale
     class I18nBackend < ::I18n::Backend::Simple
       def load_translations
-        return unless ::SourcedConfig.loaded?
+        return unless ::SourcedConfig.loaded? && ::SourcedConfig[:locales].present?
         type = ::SourcedConfig[:locales][:load_from_type]
         source = ::SourcedConfig[:locales][:load_from_source]
         null_client = Rails.env.test? ? NullClient.new : nil
