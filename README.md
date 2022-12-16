@@ -23,14 +23,56 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     $ gem install sourced_config
 
+Then install the initializer by executing:
+
+    $ rails g sourced_config:install
+
+
 ## Usage
 
-TODO: Write usage instructions here
 
-- Add an initializer to your app to configure the gem
-- Add a base config file to your app
+### Setup:
 
-Access config with `SourcedConfig[key]`
+1. Add an initializer to your app to configure the gem (eg with the generator `rails g sourced_config:install`)
+    - To manually install create an initializer, and add the following to your `Application` class:
+      ```ruby
+           # Initialise watch of application configuration
+           config.after_initialize { |app| ::SourcedConfig.setup(app) }
+           config.before_eager_load { |app| ::SourcedConfig.setup(app) }
+      ```  
+2. Add a schema class to your app to define the config schema (eg `app/config/app_contract.rb` which inherits from `SourcedConfig::ConfigContract`)
+3. Configure your app for the `aws-sdk-s3` gem
+    - If you are using the `aws-sdk-s3` gem in your app, you can skip this step
+    - otherwise read `https://github.com/aws/aws-sdk-ruby#configuration`
+4. Add a base config file to your app (eg `config/config.yml.erb` as per your initializer)
+
+### Example schema:
+
+```ruby
+class AppContract < SourcedConfig::ConfigContract
+  class ColorContract < SourcedConfig::ConfigContract 
+    params do
+      optional(:header).maybe(:string)
+      optional(:footer).maybe(:string)
+    end
+  end
+  
+  params do
+    required(:environment).filled(:string)
+    required(:app_name).filled(:string)
+    optional(:colors).hash(ColorContract.schema)
+  end
+end
+```
+
+### Accessing configuration:
+
+Access config values in your code with `SourcedConfig[key]`
+
+```ruby
+SourcedConfig[:environment]
+SourcedConfig[:colors][:footer]
+```
 
 ## Development
 
