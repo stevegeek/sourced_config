@@ -2,7 +2,7 @@
 
 # Configure after autoloading of constants so schema class can be specified
 Rails.application.config.to_prepare do
-    SourcedConfig.configure do |config|
+  SourcedConfig.configure do |config|
     # This is the class that will be used to validate the configuration. The default is the minimum configuration
     # required, `SourcedConfig::ConfigContract` but you should create your own class that inherits from it and define
     # your own configuration schema as needed.

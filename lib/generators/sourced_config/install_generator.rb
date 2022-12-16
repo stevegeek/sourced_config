@@ -14,7 +14,7 @@ module SourcedConfig
         template "templates/config.yml.erb", "config/config.yml.erb"
 
         application do
-<<RUBY
+          <<RUBY
     # Initialise watch of application configuration
     config.after_initialize { |app| ::SourcedConfig.setup(app) }
     config.before_eager_load { |app| ::SourcedConfig.setup(app) }
