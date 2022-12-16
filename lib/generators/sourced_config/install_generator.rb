@@ -12,7 +12,7 @@ module SourcedConfig
       def copy_tasks
         template "templates/sourced_config.rb", "config/initializers/sourced_config.rb"
 
-        append_to_file 'config/application.rb' do
+        application do
 <<RUBY
     # Initialise watch of application configuration
     config.after_initialize { |app| ::SourcedConfig.setup(app) }
