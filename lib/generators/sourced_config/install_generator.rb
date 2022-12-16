@@ -11,6 +11,7 @@ module SourcedConfig
       desc "Creates an initializer for the gem."
       def copy_tasks
         template "templates/sourced_config.rb", "config/initializers/sourced_config.rb"
+        template "templates/config.yml.erb", "config/config.yml.erb"
 
         application do
 <<RUBY

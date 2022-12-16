@@ -11,7 +11,7 @@ module SourcedConfig
       configuration[key]
     end
 
-    def load!(external_type, external_source_path)
+    def load!(external_type, external_source_path, schema_klass: nil)
       Rails.logger.info "Load configuration data from #{external_type} - #{external_source_path}" if external_type
       if loaded?
         Rails.logger.warn "An attempt to load configuration happened when it is already loaded"
@@ -20,7 +20,7 @@ module SourcedConfig
       primary_config = load_yaml_and_parse_erb(SourcedConfig.configuration.base_configuration_file_path).deep_symbolize_keys
       external = external_type.present? && load_external_config(external_type, external_source_path).deep_symbolize_keys
 
-      schema = SourcedConfig.configuration.config_schema_klass.new
+      schema = (schema_klass || SourcedConfig.configuration.config_schema_klass).new
       config_contract = schema.call(external ? primary_config.deep_merge(external) : primary_config)
       if config_contract.failure?
         messages = config_contract.errors(full: true).to_h

@@ -6,7 +6,7 @@ Rails.application.config.to_prepare do
     # This is the class that will be used to validate the configuration. The default is the minimum configuration
     # required, `SourcedConfig::ConfigContract` but you should create your own class that inherits from it and define
     # your own configuration schema as needed.
-    # config.config_schema_klass = SourcedConfig::ConfigContract
+    # config.config_schema_klass = AppConfig
 
     # The base configuration file path. This is always required and loaded first. It can be an ERB file.
     # config.base_configuration_file_path = Rails.root.join("config/config.yml.erb")
@@ -17,8 +17,8 @@ Rails.application.config.to_prepare do
     #  `SourcedConfig::ConfigManager::SOURCE_TYPE_S3_CONFIG_BUCKET`
     # config.config_type = SourcedConfig::ConfigManager::SOURCE_TYPE_LOCAL_FILE
 
-    # The path to the configuration file if loading a local file. It *cannot* be an ERB file.
-    # config.configuration_file_path = Rails.root.join("custom_config/config.yml")
+    # The path to the configuration file either locally or in S3. It *cannot* be an ERB file.
+    # config.configuration_file_path = "custom_config/config.yml"
 
     # If the remote configuration source is an S3 bucket, the bucket name of said bucket.
     # config.configuration_bucket = "my-bucket-name"
