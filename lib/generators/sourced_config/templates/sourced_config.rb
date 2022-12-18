@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Configure after autoloading of constants so schema class can be specified
+# Configure after autoloading of constants so schema class can be specified. But we use `to_prepare` so that configuration
+# is loaded before `before_eager_load` and `after_initialize` callbacks where configuration maybe needed.
 Rails.application.config.to_prepare do
   SourcedConfig.configure do |config|
     # This is the class that will be used to validate the configuration. The default is the minimum configuration
@@ -26,4 +27,7 @@ Rails.application.config.to_prepare do
     # If the remote configuration source is an S3 bucket, the region of said bucket.
     # config.configuration_bucket_region = "us-east-1"
   end
+
+  # `to_prepare` is called on each app reload in development mode but setup only sets up file watchers once.
+  SourcedConfig.setup(Rails.application)
 end

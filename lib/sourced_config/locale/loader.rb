@@ -30,7 +30,7 @@ module SourcedConfig
           Rails.logger.warn "[locale - #{locale}] Using only default app copy"
           HashWithIndifferentAccess.new(locale => {})
         else
-          raise StandardError, "When loading the Copy and Content the type was unrecognised! #{type}"
+          raise StandardError, "When loading the locales the type was unrecognised! #{type}"
         end
       end
 
