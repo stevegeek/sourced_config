@@ -17,7 +17,7 @@ module SourcedConfig
 
       def load(locale)
         Rails.logger.debug "Locale read from S3 locale file"
-        file = "locales/#{locale}.yml" # TODO: make this configurable
+        file = "locales/#{locale}.yml"
         str = ::SourcedConfig::S3File.read(bucket, file, region)
         yaml = YAML.safe_load(str)
         root_node = yaml[locale.to_s]
