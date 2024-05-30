@@ -58,7 +58,7 @@ module SourcedConfig
         load_s3_config_bucket_file(external_source_path)
       else
         Rails.logger.error "Cannot load external configuration data for unknown #{external_type}"
-        raise ArgumentError, "Invalid external file type"
+        raise ArgumentError, "Invalid external file type '#{external_type}'='#{external_source_path}'"
       end
     end
 
