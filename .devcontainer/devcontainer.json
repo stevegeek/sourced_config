@@ -1,0 +1,12 @@
+{
+  "name": "Sourced Config Gem Development",
+  "dockerComposeFile": "compose.yml",
+  "service": "sourced-config-dev-env",
+  "containerEnv": {
+    "RAILS_ENV": "development"
+  },
+  "forwardPorts": [3000],
+  "postCreateCommand": "bundle install",
+  "postStartCommand": "bundle exec rake test",
+  "remoteUser": "vscode"
+}

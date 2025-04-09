@@ -1,0 +1,10 @@
+name: "sourced_config"
+
+services:
+  sourced-config-dev-env:
+    container_name: sourced-config-dev-env
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "3000"

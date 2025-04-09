@@ -1,12 +1,15 @@
 require "test_helper"
 
 class SourcedConfigTest < ActiveSupport::TestCase
+  setup do
+    SourcedConfig.load!(force: true)
+  end
+
   test "it has a version number" do
     assert SourcedConfig::VERSION
   end
 
   test ".load!(force: true)" do
-    SourcedConfig.load!(force: true)
     assert_equal "test", SourcedConfig[:environment]
     assert_equal "black", SourcedConfig[:footer_color]
   end

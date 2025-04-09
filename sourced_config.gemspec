@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Load configuration & locales for Rails apps from a remote or local non-repo source."
   spec.homepage = "https://github.com/stevegeek/sourced_config"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.7.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
@@ -30,9 +30,12 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "aws-sdk-s3", "< 2"
-  spec.add_dependency "rails", ">= 6", "< 8"
+  spec.add_dependency "activesupport", ">= 7.2", "< 9"
+  spec.add_dependency "railties", ">= 7.2", "< 9"
+  spec.add_dependency "i18n", ">= 1", "< 2"
   spec.add_dependency "dry-monads", "< 2"
   spec.add_dependency "dry-validation", "< 2"
+  spec.add_dependency "csv",  ">= 1", "< 4"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
